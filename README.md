@@ -12,12 +12,12 @@ Seurat==4.3.0
 ```
 ### Essential Python packages:  
 ```
-Python==3.8.13
-numpy==1.20.3
-pandas==1.3.3
-scikit_learn==0.24.2
-scipy==1.7.1
-torch==2.0.1 # For CUDA 11.2
+Python==3.8.17
+numpy==1.24.3
+pandas==2.0.3
+scikit_learn==1.2.0
+scipy==1.9.3
+torch==2.0.1 # For CUDA 11.7
 ```
 ### Preparing input data for HyGAnno
 HyGAnno takes count matrices of `.mtx.gz` format, feature name of `.tsv.gz` and cell label list of `.csv` format as inputs. The reference data of scRNA-seq and target data of scATAC-seq data should be contained in two folders named `Raw_RNA` and `Raw_ATAC`, respectively. 
@@ -72,8 +72,8 @@ $ Python main.py
 ```
 ### Arguments for training
 - `dir_path`: Current working directory, default is `"./HyGAnno"`.
-- `PATH_feature`: A path list of feature matrices, default is `["./HyGAnno/HyGAnno_inputs/Feature_matrices/GEM.mtx","./HyGAnno/HyGAnno_inputs/Feature_matrices/PM.mtx","./HyGAnno/HyGAnno_inputs/Feature_matrices/GAM.mtx"]`.
-- `PATH_feature`: A path list of graphs, default is `["./HyGAnno/HyGAnno_inputs/Graphs/RNA_graph.csv","./HyGAnno/HyGAnno_inputs/Graphs/ATAC_graph.csv","./HyGAnno/HyGAnno_inputs/Graphs/Anchor_graph.csv"]`.
+- `PATH_feature`: A path list of feature matrices, default searching files in `./HyGAnno/HyGAnno_inputs/Feature_matrices` .
+- `PATH_feature`: A path list of graphs, default searching files in `./HyGAnno/HyGAnno_inputs/Graphs` .
 - `taget_label`: Accessibilty of the ground truth of target labels, default is `"False"`.
 - `use_GPU`: Usage of the GPU, automatically detect avaliable GPU device, if no GPU is detected, CPU will be used.
 - `hidden_hyg_dim1`: Dimension number of the first hidden layer of hybrid graph embedding, default is `128`.
@@ -83,12 +83,18 @@ $ Python main.py
 - `learning_rate`: Leanring rate of the network, default is `0.0001`.
 - `epoch`: Epoch number of training, default is `500`.
 
-## Output
+## Outputs
 HyGAnno will output three files in `./outputs`.
 ```
-
+$ tree outputs/
+outputs/
+├── atac_cell_embedding.csv
+├── cell_type_prediction.csv
+└── reconstructed_graph.npz
 ```
+Note that `cell_type_prediction.csv` is the predicted cell labels for target scATAC-seq data; `atac_cell_embedding.csv` is the cell embedding of scATAC-seq data; `reconstructed_graph.npz` is the reconstructed RNA-ATAC graph. 
 
+## Visualization
 
 
 
