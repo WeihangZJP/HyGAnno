@@ -94,7 +94,18 @@ outputs/
 ```
 Note that `cell_type_prediction.csv` is the predicted cell labels for target scATAC-seq data; `atac_cell_embedding.csv` is the cell embedding of scATAC-seq data; `reconstructed_graph.npz` is the reconstructed RNA-ATAC graph. 
 
-## Visualization
+## Visualizing the cell embeddings
+To visualize the cell embedding of scATAC-seq provided by HyGAnno, we apply UMAP on the obtained embeddding space. The pdf figure will be save as `./outputs/UMAP_plot.pdf`.
+```
+# your terminal
+$ Rscript embedding_visualization.R
+```
+Note that additional R packages are needed.
+```
+install.packages(c("ggplot2", "ggthemes", "ggpubr",  "uwot"))
+```
+
+## Detecting ambiguous cells
 
 
 
