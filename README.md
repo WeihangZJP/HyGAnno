@@ -39,7 +39,7 @@ Raw_ATAC
 Note that the `target_label.csv` is optional and will be only used for validation. Besides, the first column name of `reference(target)_label.csv` should be the`cluster_name` while the seond one should be the `cluster_id`.
 ## Running HyGAnno
 
-### Graph construction
+### Constructing graphs
 ```
 # your terminal
 $ cd HyGAnno/
@@ -61,10 +61,33 @@ $ tree ./HyGAnno_inputs/Graphs
 ├── Anchor_graph.csv
 └── RNA_graph.csv
 ```
-Note that the first column in Anchor_graph.csv means the cell index of RNA cells while the second column means the cell index of ATAC cells. Each cell pair indicates an edge.
+Note that the first column in `Anchor_graph.csv` means the cell index of RNA cells while the second column means the cell index of ATAC cells. Each cell pair indicates an edge.
 
+### Starting training
+1. Modify the arguments in `configs.py` file.
+2. Run `main.py` in terminal.
+```
+# your terminal
+$ Python main.py
+```
+### Arguments for training
+- `dir_path`: Current working directory, default is `"./HyGAnno"`.
+- `PATH_feature`: A path list of feature matrices, default is `["./HyGAnno/HyGAnno_inputs/Feature_matrices/GEM.mtx","./HyGAnno/HyGAnno_inputs/Feature_matrices/PM.mtx","./HyGAnno/HyGAnno_inputs/Feature_matrices/GAM.mtx"]`.
+- `PATH_feature`: A path list of graphs, default is `["./HyGAnno/HyGAnno_inputs/Graphs/RNA_graph.csv","./HyGAnno/HyGAnno_inputs/Graphs/ATAC_graph.csv","./HyGAnno/HyGAnno_inputs/Graphs/Anchor_graph.csv"]`.
+- `taget_label`: Accessibilty of the ground truth of target labels, default is `"False"`.
+- `use_GPU`: Usage of the GPU, automatically detect avaliable GPU device, if no GPU is detected, CPU will be used.
+- `hidden_hyg_dim1`: Dimension number of the first hidden layer of hybrid graph embedding, default is `128`.
+- `hidden_hyg_dim2`: Dimension number of the second hidden layer of hybrid graph embedding, default is the number of cell type in reference data.
+- `hidden_atac_dim1`: Dimension number of the first hidden layer of atac graph embedding, default is `128`.
+- `hidden_atac_dim2`: Dimension number of the second hidden layer of atac graph embedding, default is the number of cell type in reference data.
+- `learning_rate`: Leanring rate of the network, default is `0.0001`.
+- `epoch`: Epoch number of training, default is `500`.
 
+## Output
+HyGAnno will output three files in `./outputs`.
+```
 
+```
 
 
 
