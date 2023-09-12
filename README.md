@@ -1,8 +1,6 @@
 # HyGAnno
 HyGAnno is an automated cell type annotation method designed to improve the annotation quality of single-cell ATAC-seq (scATAC-seq) data. HyGAnno transfers cell type information from well-annotated scRNA-seq references to unlabeled scATAC-seq targets, 
-by utilizing inherent information derived from the original peaks of the data. HyGAnno provides not only cell type annotations but also a reference-target cell graph to assist in identifying ambiguous cells, thereby enhancing the reliability of the cell annotations. HyGAnno stands out for its accuracy in cell annotation and its capacity for interpretable cell embedding, exhibiting robustness against noisy reference data and adaptability to tumor tissues. For more information. please refer our manuscript in XXXXX.
-
-HyGAnno is developed using R and Python. The required packages are provided by exported conda virtual environment.
+by utilizing inherent information derived from the original peaks of the data. HyGAnno provides not only cell type annotations but also a reference-target cell graph to assist in identifying ambiguous cells, thereby enhancing the reliability of the cell annotations. HyGAnno stands out for its accuracy in cell annotation and its capacity for interpretable cell embedding, exhibiting robustness against noisy reference data and adaptability to tumor tissues. For more information. please refer our manuscript. HyGAnno is developed using R and Python. 
 ## Prerequisite 
 ### Essential R packages: 
 ```
@@ -84,7 +82,7 @@ $ Python main.py
 - `hidden_atac_dim1`: Dimension number of the first hidden layer of atac graph embedding, default is `128`.
 - `hidden_atac_dim2`: Dimension number of the second hidden layer of atac graph embedding, default is the number of cell type in reference data.
 - `learning_rate`: Leanring rate of the network, default is `0.0001`.
-- `epoch`: Epoch number of training, default is `500`.
+- `epoch`: Epoch number of training, default is `800`.
 
 ## Outputs
 HyGAnno will output three files in `./outputs`.
@@ -109,6 +107,15 @@ The RNA-ATAC cell graph reconstructed by HyGAnno can be futher used to detetct a
 ```
 # your terminal
 $ Python ambiguous_cell_detection.py
+```
+The outputs will be saved in `./outputs/Ambiguous_cell_detection/`. The cell metadata of the target scATAC-seq data is saved as `target_cell_meta.csv`.
+```
+$ tree Ambiguous_cell_detection
+Ambiguous_cell_detection
+├── final_detection.pdf
+├── first_step_detection.pdf
+├── target_cell_meta.csv
+└── x_means_result.pdf
 ```
 ### Arguments for detecting function
 - `n_neighbors`: k nearest neighbors for finding the neighbors of the ATAC cells, default is 3. 
