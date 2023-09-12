@@ -1,6 +1,9 @@
 # HyGAnno
-HyGAnno is an automated cell type annotation method designed to improve the annotation quality of single-cell ATAC-seq (scATAC-seq) data. HyGAnno transfers cell type information from well-annotated scRNA-seq references to unlabeled scATAC-seq targets, 
-by utilizing inherent information derived from the original peaks of the data. HyGAnno provides not only cell type annotations but also a reference-target cell graph to assist in identifying ambiguous cells, thereby enhancing the reliability of the cell annotations. HyGAnno stands out for its accuracy in cell annotation and its capacity for interpretable cell embedding, exhibiting robustness against noisy reference data and adaptability to tumor tissues. For more information. please refer our manuscript. HyGAnno is developed using R and Python. 
+HyGAnno is an automated cell type annotation method designed to improve the annotation quality of single-cell ATAC-seq (scATAC-seq) data. 
+
+HyGAnno transfers cell type information from well-annotated scRNA-seq references to unlabeled scATAC-seq targets, by utilizing inherent information derived from the original peaks of the data. HyGAnno provides not only cell type annotations but also a reference-target cell graph to assist in identifying ambiguous cells, thereby enhancing the reliability of the cell annotations. HyGAnno stands out for its accuracy in cell annotation and its capacity for interpretable cell embedding, exhibiting robustness against noisy reference data and adaptability to tumor tissues. 
+
+HyGAnno is developed using R and Python. For more information, please refer our manuscript. 
 ## Prerequisite 
 ### Essential R packages: 
 ```
@@ -21,7 +24,7 @@ umap-learn==0.5.3
 pyclustering==0.10.1.2 
 ```
 ### Preparing input data for HyGAnno
-HyGAnno takes count matrices of `.mtx.gz` format, feature name of `.tsv.gz` and cell label list of `.csv` format as inputs. The reference data of scRNA-seq and target data of scATAC-seq data should be contained in two folders named `Raw_RNA` and `Raw_ATAC`, respectively. 
+HyGAnno takes count matrices of `.mtx.gz` format, feature name of `.tsv.gz` and cell label list of `.csv` format as inputs. The reference data of scRNA-seq and target data of scATAC-seq data should be contained in two folders named `Raw_RNA` and `Raw_ATAC`, respectively. We provide the sample data as [Raw_ATAC](https://hygannodata.s3.ap-northeast-1.amazonaws.com/Raw_ATAC.zip) and [Raw_RNA](https://hygannodata.s3.ap-northeast-1.amazonaws.com/Raw_RNA.zip). After unzipping, the two folders should be placed in `./HyGAnno`.
 ```
 $ tree Raw_RNA
 Raw_RNA
