@@ -13,11 +13,14 @@ Seurat==4.3.0
 ### Essential Python packages:  
 ```
 Python==3.8.17
-numpy==1.24.3
+numpy==1.23.4
 pandas==2.0.3
 scikit_learn==1.2.0
 scipy==1.9.3
 torch==2.0.1 # For CUDA 11.7
+matplotlib==3.7.2
+umap-learn==0.5.3
+pyclustering==0.10.1.2 
 ```
 ### Preparing input data for HyGAnno
 HyGAnno takes count matrices of `.mtx.gz` format, feature name of `.tsv.gz` and cell label list of `.csv` format as inputs. The reference data of scRNA-seq and target data of scATAC-seq data should be contained in two folders named `Raw_RNA` and `Raw_ATAC`, respectively. 
@@ -70,7 +73,7 @@ Note that the first column in `Anchor_graph.csv` means the cell index of RNA cel
 # your terminal
 $ Python main.py
 ```
-### Arguments for training
+### Arguments for training function
 - `dir_path`: Current working directory, default is `"./HyGAnno"`.
 - `PATH_feature`: A path list of feature matrices, default searching files in `./HyGAnno/HyGAnno_inputs/Feature_matrices` .
 - `PATH_feature`: A path list of graphs, default searching files in `./HyGAnno/HyGAnno_inputs/Graphs` .
@@ -98,14 +101,20 @@ Note that `cell_type_prediction.csv` is the predicted cell labels for target scA
 To visualize the cell embedding of scATAC-seq provided by HyGAnno, we apply UMAP on the obtained embeddding space. The pdf figure will be save as `./outputs/UMAP_plot.pdf`.
 ```
 # your terminal
-$ Rscript embedding_visualization.R
-```
-Note that additional R packages are needed.
-```
-install.packages(c("ggplot2", "ggthemes", "ggpubr",  "uwot"))
+$ Python visualization.py
 ```
 
 ## Detecting ambiguous cells
+The RNA-ATAC cell graph reconstructed by HyGAnno can be futher used to detetct ambiguous cells (cells with uncertain prediction or cells without reference information). For the first step, for each ATAC cell, we evaluate the connectivity between this ATAC cell and other RNA cell clusters. If this ATAC cell shows highest connection with RNA cell cluster with an inconsistent cell type different from the predicted cell type, we record this cell as candidate ambiguous cell. For the second step, we apply x-means clustering algorithm on the embedding space of these candidate ambiguous cells, select cells in the largest cluster and filter out other cells. We then use KNN iteration strategy to inflate the largest cluster and obtain the final amiguous cells. We recommend the users remove these cells or care about the prediction results for these ambiguous cells.
+```
+# your terminal
+$ Python ambiguous_cell_detection.py
+```
+### Arguments for detecting function
+- `n_neighbors`: k nearest neighbors for finding the neighbors of the ATAC cells, default is 3. 
+- `knn_iter`: iteration times to expand the candidate ambiuous cells
+- `expand_strategy`: knn expanding strategy. "soft": ifcandidate ambiguous cell are included in neighbors of a confident cell, this confident cell is re-annotated as candidate ambiguous cell. "hard": only when candidate ambiguous cell number are larger than confident cell number in neighbors of a confident cell, this confident cell is re-annotated as candidate ambiguous cell.
+
 
 
 
