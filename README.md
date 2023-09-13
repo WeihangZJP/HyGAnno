@@ -8,8 +8,8 @@ HyGAnno is developed using R and Python. For more information, please refer our 
 ### Essential R packages: 
 ```
 R-basic==4.2.1
-Signac==1.7.0
-Seurat==4.3.0
+r-signac==1.10.0
+r-seurat==4.3.0
 ```
 ### Essential Python packages:  
 ```
