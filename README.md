@@ -24,7 +24,7 @@ umap-learn==0.5.3
 pyclustering==0.10.1.2 
 ```
 ### Preparing input data for HyGAnno
-HyGAnno takes count matrices of `.mtx.gz` format, feature name of `.tsv.gz` and cell label list of `.csv` format as inputs. The reference data of scRNA-seq and target data of scATAC-seq data should be contained in two folders named `Raw_RNA` and `Raw_ATAC`, respectively. We provide the sample data as [Raw_ATAC](https://hygannodata.s3.ap-northeast-1.amazonaws.com/Raw_ATAC.zip) and [Raw_RNA](https://hygannodata.s3.ap-northeast-1.amazonaws.com/Raw_RNA.zip). After unzipping, the two folders should be placed in `./HyGAnno`.
+HyGAnno takes count matrices of `.mtx.gz` format, feature name of `.tsv.gz` and cell label list of `.csv` format as inputs. The reference data of scRNA-seq and target data of scATAC-seq data should be contained in two folders named `Raw_RNA` and `Raw_ATAC`, respectively. We provide the sample data as [Raw_ATAC](https://hygannodata.s3.ap-northeast-1.amazonaws.com/Raw_ATAC.zip) and [Raw_RNA](https://hygannodata.s3.ap-northeast-1.amazonaws.com/Raw_RNA.zip).We also provide the corresponding gene activity matrix for scATAC-seq as [Gene_activity](https://hygannodata.s3.ap-northeast-1.amazonaws.com/Gene_activity.zip). After unzipping, these folders should be placed in `./HyGAnno`.
 ```
 $ tree Raw_RNA
 Raw_RNA
@@ -38,7 +38,13 @@ Raw_ATAC
 ├── barcodes.tsv.gz
 ├── features.tsv.gz
 ├── matrix.mtx.gz
-└── target_label.csv 
+└── target_label.csv
+
+$ tree Gene_activity
+Gene_activity
+├── barcodes.tsv.gz
+├── features.tsv.gz
+└── matrix.mtx.gz
 ```
 Note that the `target_label.csv` is optional and will be only used for validation. Besides, the first column name of `reference(target)_label.csv` should be the`cluster_name` while the seond one should be the `cluster_id`.
 ## Running HyGAnno
