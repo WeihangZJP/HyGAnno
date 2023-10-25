@@ -35,7 +35,7 @@ for label in set(atac_label_id):
     mask = [l == label for l in atac_label_id]
     plt.scatter([x[i] for i in range(len(x)) if mask[i]],
                 [y[i] for i in range(len(y)) if mask[i]],
-                label=label,s=10)
+                label=label,c=[color[i] for i in range(len(color)) if mask[i]],s=1)
 
 
 plt.xticks([])
