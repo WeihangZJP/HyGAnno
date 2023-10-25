@@ -38,9 +38,11 @@ if __name__=='__main__':
     #change the numpy format of feature and graph matrices to tensor format
     feature_tensor,graph_tensor=To_Sparse_tensor(graph_dict,feature_dict)
     
+    print(graph_dict["initial_label"])
+    print(torch.sparse.sum(graph_dict["initial_label"]))
     #normalize the whole initial graph 
-    norm = graph_dict["initial_label"].shape[0] * graph_dict["initial_label"].shape[0] / float((graph_dict["initial_label"].shape[0] * graph_dict["initial_label"].shape[0] - graph_dict["initial_label"].sum()) * 2)
-    weight = float(graph_dict["initial_label"].shape[0] * graph_dict["initial_label"].shape[0] - graph_dict["initial_label"].sum()) / graph_dict["initial_label"].sum()
+    norm = graph_dict["initial_label"].shape[0] * graph_dict["initial_label"].shape[0] / float((graph_dict["initial_label"].shape[0] * graph_dict["initial_label"].shape[0] - torch.sparse.sum(graph_dict["initial_label"])) * 2)
+    weight = float(graph_dict["initial_label"].shape[0] * graph_dict["initial_label"].shape[0] - torch.sparse.sum(graph_dict["initial_label"])) / torch.sparse.sum(graph_dict["initial_label"])
     weight_mask = graph_tensor["initial_label"].to_dense().view(-1) == 1
     weight_tensor = torch.ones(weight_mask.size(0)) 
     weight_tensor[weight_mask] = weight
@@ -154,16 +156,3 @@ if __name__=='__main__':
     preds = output.max(1)[1].type_as(ref_label_ind_ten).cpu().detach().numpy()
 
     print(sklearn.metrics.classification_report(label_dict["tar_label"], preds[reference_cell_num:], digits=3))
-
-        
-    
-
-
-    
-            
-        
-
-
-    
-    
-    
