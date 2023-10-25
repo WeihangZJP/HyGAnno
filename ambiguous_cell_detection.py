@@ -1,14 +1,8 @@
 import numpy as np
-import  scipy.sparse as sp
+import scipy.sparse as sp
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
-import random
-
-from pyclustering.cluster import cluster_visualizer
-from pyclustering.cluster.xmeans import xmeans
-from pyclustering.cluster.center_initializer import kmeans_plusplus_initializer
-from random import choice
 from collections import Counter
 import argparse
 
@@ -35,7 +29,7 @@ dir_path=os.path.dirname(os.path.abspath(__file__))
 ##---------------(saved in ./outputs/Ambiguous_cell_detection/)
 
 
-def first_decision(reconstructed_graph,reference_label):
+def first_decision(reconstructed_graph,target_label_pred,reference_label):
     reference_counter = Counter(reference_label)
     print("Start calculating the metric D and W for each target cell")
     #calculate the metrics fo w and d for each cell in target data
@@ -109,17 +103,39 @@ def first_decision(reconstructed_graph,reference_label):
     amb=umap_df[umap_df["cell_certainty"]=="ambiguous"]
     con=umap_df[umap_df["cell_certainty"]=="confident"]
     
-    plt.figure(figsize=(5, 5))
+    class_color20=["#1f77b4","#aec7e8","#ff7f0e","#ffbb78","#2ca02c","#98df8a","#d62728","#ff9896","#9467bd","#c5b0d5",
+                 "#8c564b","#c49c94","#e377c2","#f7b6d2","#7f7f7f","#c7c7c7","#bcbd22","#dbdb8d","#17becf","#9edae5"]
+    color=[class_color20[i] for i in target_label_pred]
+    plt.figure(figsize=(15, 5))
+    plt.subplot(1, 2, 1) 
+    plt.title("Cell type prediction")
+    x=umap_df["UMAP1"]
+    y=umap_df["UMAP2"]
+    for label in set(umap_df["cell_label"]):
+        mask = [l == label for l in umap_df["cell_label"]]
+        plt.scatter([x[i] for i in range(len(x)) if mask[i]],
+                    [y[i] for i in range(len(y)) if mask[i]],
+                    label=label,c=[color[i] for i in range(len(color)) if mask[i]],s=1)
     
-    plt.scatter(con["UMAP1"],con["UMAP2"], s=10,c="#BDBDBD", alpha=0.5,label="Confident cell")
-    plt.scatter(amb["UMAP1"],amb["UMAP2"], s=10,c="#EF8535", alpha=0.5,marker='^',label="Ambiguous cell")
-    
-    # Hide X and Y axes tick marks
+
     plt.xticks([])
     plt.yticks([])
     plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
-    plt.savefig(dir_path+"/outputs/Ambiguous_cell_detection/first_step_detection.pdf", format="pdf", bbox_inches="tight")
-    plt.show()
+    
+    plt.subplot(1, 2, 2) 
+    plt.title("Ambiguous cell detection")
+    
+    plt.scatter(con["UMAP1"],con["UMAP2"], s=1,c="#BDBDBD", alpha=0.5,label="Confident cell")
+    plt.scatter(amb["UMAP1"],amb["UMAP2"], s=1,c="#EF8535", alpha=0.5,marker='^',label="Ambiguous cell")
+    
+    plt.xticks([])
+    plt.yticks([])
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+    
+    plt.tight_layout(pad=3)
+    plt.savefig(dir_path+"/outputs/Ambiguous_cell_detection/Ambiguous_cell_distribution.pdf", format="pdf", bbox_inches="tight")
+    
+    umap_df.to_csv(dir_path+"/outputs/Ambiguous_cell_detection/target_cell_meta.csv",index=False)
     
     return candidate_ambiguous_cell,umap_df
 #------------------------------------------------------------------------------------------------------------------------#
@@ -130,40 +146,8 @@ def first_decision(reconstructed_graph,reference_label):
 
 
 #------------------------------------------------------------------------------------------------------------------------#
-# function name: x_means_clustering
-# Description: an cluster number-free unsupervised clustering method to cluster 
-#--------------candidate ambiguous cells into several clusters.
-
-## inputs: 1. cell embedding where x-means will be applied on.
-##---------2. maximum cluster number
-
-## return: clustering result
-
-
-## output files: UMAP visualization of the distribution of candidate ambiguous cells 
-##---------------(saved in ./outputs/Ambiguous_cell_detection/)
-
-def x_means_clustering(cell_embedding,max_clu_num=10):
-    amount_initial_centers = 2
-    initial_centers = kmeans_plusplus_initializer(cell_embedding, amount_initial_centers).initialize()
-    # Create instance of X-Means algorithm. The algorithm will start analysis from 2 clusters, the maximum
-    xmeans_instance = xmeans(cell_embedding, initial_centers, max_clu_num)
-    xmeans_instance.process()    
-    return  xmeans_instance.get_clusters()
-#------------------------------------------------------------------------------------------------------------------------#
-
-
-
-
-
-
-
-
-
-#------------------------------------------------------------------------------------------------------------------------#
-# function name: x_means_clustering
-# Description: an cluster number-free unsupervised clustering method to cluster 
-#--------------candidate ambiguous cells into several clusters.
+# function name: second_decision
+# Description: an knn-based method to detect more candidate ambiguous cells
 
 ## inputs: 1. indices of candidate ambiguous cells from the first decision
 ##---------2. umap dataframe of the cell embedding
@@ -174,58 +158,26 @@ def x_means_clustering(cell_embedding,max_clu_num=10):
 ## return: No return
 
 
-## output files: 1. Visualization of each cluster detected by x-means
-##---------------2. Visualization of final detected ambiguous cells 
-##---------------3. the metadata of target cells predicted by HyGAnno 
+## output files: 1. Visualization of final detected ambiguous cells 
+##---------------2. the metadata of target cells 
 ##---------------(saved in ./outputs/Ambiguous_cell_detection/)
 
-def second_decision(candidate_ambiguous_cell,umap_df,n_neighbors=4,knn_iter=40,expand_strategy="soft"):
+def second_decision(candidate_ambiguous_cell,umap_df,target_label_pred,n_neighbors=3,knn_iter=40,expand_strategy="soft"):
     
-       
+    
     #import cell embedding
     atac_cell_embed=pd.read_csv(dir_path+"/outputs/atac_cell_embedding.csv")
-    
-    clusters=x_means_clustering(atac_cell_embed[umap_df["cell_certainty"]=="ambiguous"],max_clu_num=10)
-    
-    #plot X-means result
-    cell_cluster=[-1 for i in range(len(candidate_ambiguous_cell))]
-    for ind,i in enumerate(clusters):
-        for j in range(len(i)):
-            cell_cluster[i[j]]=ind
-    
-    data=umap_df[umap_df["cell_certainty"]=="ambiguous"]
-    
-    plt.figure(figsize=(5, 5))
-    x=list(data["UMAP1"])
-    y=list(data["UMAP2"])
-    for label in set(cell_cluster):
-        mask = [l == label for l in cell_cluster]
-        plt.scatter([x[i] for i in range(len(x)) if mask[i]],
-                    [y[i] for i in range(len(y)) if mask[i]],
-                    label="Cluster"+str(label+1),s=10)
-    # Hide X and Y axes tick marks
-    plt.xticks([])
-    plt.yticks([])
-    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
-    plt.savefig(dir_path+"/outputs/Ambiguous_cell_detection/x_means_result.pdf", format="pdf", bbox_inches="tight")
-    
-    
-    
-            
-    #use cells in the largest cluster as candidate ambiguous cells 
-    cluster_size=[len(i) for i in clusters]
-    largest_cluster_ind=cluster_size.index(max(cluster_size))
-    candidate_ambiguous_cell_re=[list(candidate_ambiguous_cell)[i] for i in clusters[largest_cluster_ind]]
-    
+
+
     #knn expanding these candidate cells
     from sklearn.neighbors import NearestNeighbors
     nbrs = NearestNeighbors(n_neighbors=n_neighbors, algorithm='kd_tree').fit(atac_cell_embed)
-    knn_matrix = nbrs.kneighbors(atac_cell_embed, return_distance=False)  # 记录每个样本的k个最近邻对应的索引
+    knn_matrix = nbrs.kneighbors(atac_cell_embed, return_distance=False)  
     knn_matrix=knn_matrix[:,1:]
     
     cell_certainty_new=[]
     for i in range(len(target_label_pred)):
-        if i in candidate_ambiguous_cell_re:
+        if i in candidate_ambiguous_cell:
             cell_certainty_new.append("ambiguous")
         else:
             cell_certainty_new.append("confident")
@@ -272,6 +224,9 @@ def second_decision(candidate_ambiguous_cell,umap_df,n_neighbors=4,knn_iter=40,e
     amb=target_cell_meta_df[target_cell_meta_df["prediction_certainty"]=="ambiguous"]
     con=target_cell_meta_df[target_cell_meta_df["prediction_certainty"]=="confident"]
     
+    class_color20=["#1f77b4","#aec7e8","#ff7f0e","#ffbb78","#2ca02c","#98df8a","#d62728","#ff9896","#9467bd","#c5b0d5",
+                 "#8c564b","#c49c94","#e377c2","#f7b6d2","#7f7f7f","#c7c7c7","#bcbd22","#dbdb8d","#17becf","#9edae5"]
+    color=[class_color20[i] for i in target_label_pred]
     plt.figure(figsize=(15, 5))
     plt.subplot(1, 2, 1) 
     plt.title("Cell type prediction")
@@ -281,7 +236,7 @@ def second_decision(candidate_ambiguous_cell,umap_df,n_neighbors=4,knn_iter=40,e
         mask = [l == label for l in target_cell_meta["precicted_label"]]
         plt.scatter([x[i] for i in range(len(x)) if mask[i]],
                     [y[i] for i in range(len(y)) if mask[i]],
-                    label=label,s=10)
+                    label=label,c=[color[i] for i in range(len(color)) if mask[i]],s=1)
     
     
     plt.xticks([])
@@ -291,8 +246,8 @@ def second_decision(candidate_ambiguous_cell,umap_df,n_neighbors=4,knn_iter=40,e
     plt.subplot(1, 2, 2) 
     plt.title("Ambiguous cell detection (second step)")
     
-    plt.scatter(con["UMAP1"],con["UMAP2"], s=10,c="#BDBDBD", alpha=0.5,label="Confident cell")
-    plt.scatter(amb["UMAP1"],amb["UMAP2"], s=10,c="#EF8535", alpha=0.5,marker='^',label="Ambiguous cell")
+    plt.scatter(con["UMAP1"],con["UMAP2"], s=1,c="#BDBDBD", alpha=0.5,label="Confident cell")
+    plt.scatter(amb["UMAP1"],amb["UMAP2"], s=1,c="#EF8535", alpha=0.5,marker='^',label="Ambiguous cell")
     
     plt.xticks([])
     plt.yticks([])
@@ -308,10 +263,13 @@ def second_decision(candidate_ambiguous_cell,umap_df,n_neighbors=4,knn_iter=40,e
 if __name__=='__main__':
 
     parser = argparse.ArgumentParser()
+
     parser.add_argument('--n_neighbors', type=int, default = 3)
     parser.add_argument('--knn_iter', type=int, default=40)
-    parser.add_argument('--expand_strategy', type=str, default="soft")
+    parser.add_argument('--expand_strategy', type=str, default="hard")
     args = parser.parse_args()
+
+    
 
     #import data
     reconstructed_graph = sp.load_npz(dir_path+"/outputs/reconstructed_graph.npz")
@@ -322,24 +280,6 @@ if __name__=='__main__':
     target_label_pred=list(target_label_pred.iloc[:,0])
     reference_label=list(reference_label.iloc[:,1])
     
-    candidate_ambiguous_cell,umap_df=first_decision(reconstructed_graph,reference_label)
-    second_decision(candidate_ambiguous_cell,umap_df,n_neighbors=args.n_neighbors,knn_iter=args.knn_iter,expand_strategy=args.expand_strategy)
+    candidate_ambiguous_cell,umap_df=first_decision(reconstructed_graph,target_label_pred,reference_label)
+    second_decision(candidate_ambiguous_cell,umap_df,target_label_pred,n_neighbors=args.n_neighbors,knn_iter=args.knn_iter,expand_strategy=args.expand_strategy)
     
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
