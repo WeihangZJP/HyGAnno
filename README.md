@@ -111,8 +111,8 @@ To visualize the cell embedding of scATAC-seq provided by HyGAnno, we apply UMAP
 $ python visualization.py
 ```
 
-## Prediction certainty
-The RNA-ATAC cell graph reconstructed by HyGAnno can be futher used to detetct ambiguous cells (cells with uncertain prediction ). For the first step, for each ATAC cell, we evaluate the connectivity between this ATAC cell and other RNA cell clusters. If this ATAC cell shows highest connection with RNA cell cluster with an inconsistent cell type different from the predicted cell type, we record this cell as candidate ambiguous cell. For the second step, we use KNN iteration strategy to inflate the population of ambiguous cells.
+## Prediction reliability
+The RNA-ATAC cell graph reconstructed by HyGAnno can be futher used to detetct ambiguous cells (cells with uncertain prediction ). For the first step, for each ATAC cell, we evaluate the connectivity between this ATAC cell and other RNA cell clusters. If this ATAC cell shows highest connection with RNA cell cluster with an inconsistent cell type different from the predicted cell type, we record this cell as ambiguous cell. For the second step, we use KNN iteration strategy to inflate the population of ambiguous cells.
 ```
 # your terminal
 $ python ambiguous_cell_detection.py --n_neighbors=3 --knn_iter=40 --expand_strategy=hard
