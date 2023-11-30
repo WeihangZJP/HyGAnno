@@ -21,7 +21,6 @@ scipy==1.9.3
 torch==2.0.1 # For CUDA 11.7
 matplotlib==3.7.2
 umap-learn==0.5.3
-pyclustering==0.10.1.2 
 ```
 ### Preparing input data for HyGAnno
 HyGAnno takes count matrices of `.mtx.gz` format, feature name of `.tsv.gz` and cell label list of `.csv` format as inputs. The reference data of scRNA-seq and target data of scATAC-seq data should be contained in two folders named `Raw_RNA` and `Raw_ATAC`, respectively. We provide the sample data as [Raw_ATAC](https://hygannodata.s3.ap-northeast-1.amazonaws.com/Raw_ATAC.zip) and [Raw_RNA](https://hygannodata.s3.ap-northeast-1.amazonaws.com/Raw_RNA.zip).We also provide the corresponding gene activity matrix for scATAC-seq as [Gene_activity](https://hygannodata.s3.ap-northeast-1.amazonaws.com/Gene_activity.zip). After unzipping, these folders should be placed in `./HyGAnno`.
