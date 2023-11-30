@@ -1,7 +1,7 @@
 # HyGAnno
 HyGAnno is an automated cell type annotation method designed to improve the annotation quality of single-cell ATAC-seq (scATAC-seq) data. 
 
-HyGAnno transfers cell type information from well-annotated scRNA-seq references to unlabeled scATAC-seq targets, by utilizing inherent information derived from the original peaks of the data. HyGAnno provides not only cell type annotations but also a reference-target cell graph to assist in identifying ambiguous cells, thereby enhancing the reliability of the cell annotations. HyGAnno stands out for its accuracy in cell annotation and its capacity for interpretable cell embedding, exhibiting robustness against noisy reference data and adaptability to tumor tissues. 
+HyGAnno transfers cell type information from well-annotated scRNA-seq references to unlabeled scATAC-seq targets by utilizing peak-level information. HyGAnno provides not only cell type annotations but also a reference-target cell graph to assist in identifying cells with low predictions, thereby enhancing the reliability of the cell annotation. HyGAnno stands out for its accuracy in cell annotation and its capacity for interpretable cell embedding, exhibiting robustness against noisy reference data and adaptability to tumor tissues. 
 
 HyGAnno is developed using R and Python. For more information, please refer our manuscript. 
 ## Prerequisite 
@@ -91,7 +91,7 @@ $ python main.py
 - `hidden_atac_dim1`: Dimension number of the first hidden layer of atac graph embedding, default is `128`.
 - `hidden_atac_dim2`: Dimension number of the second hidden layer of atac graph embedding, default is the number of cell type in reference data.
 - `learning_rate`: Leanring rate of the network, default is `0.0001`.
-- `epoch`: Epoch number of training, default is `800`.
+- `epoch`: Epoch number of training, default is `500`.
 
 ## Outputs
 HyGAnno will output three files in `./outputs`.
@@ -111,24 +111,22 @@ To visualize the cell embedding of scATAC-seq provided by HyGAnno, we apply UMAP
 $ python visualization.py
 ```
 
-## Detecting ambiguous cells
-The RNA-ATAC cell graph reconstructed by HyGAnno can be futher used to detetct ambiguous cells (cells with uncertain prediction or cells without reference information). For the first step, for each ATAC cell, we evaluate the connectivity between this ATAC cell and other RNA cell clusters. If this ATAC cell shows highest connection with RNA cell cluster with an inconsistent cell type different from the predicted cell type, we record this cell as candidate ambiguous cell. For the second step, we apply x-means clustering algorithm on the embedding space of these candidate ambiguous cells, select cells in the largest cluster and filter out other cells. We then use KNN iteration strategy to inflate the largest cluster and obtain the final amiguous cells. We recommend the users remove these cells or care about the prediction results for these ambiguous cells.
+## Prediction reliability
+The RNA-ATAC cell graph reconstructed by HyGAnno can be futher used to detetct ambiguous cells (cells with uncertain prediction ). For the first step, for each ATAC cell, we evaluate the connectivity between this ATAC cell and other RNA cell clusters. If this ATAC cell shows highest connection with RNA cell cluster with an inconsistent cell type different from the predicted cell type, we record this cell as ambiguous cell. For the second step, we use KNN iteration strategy to inflate the population of ambiguous cells.
 ```
 # your terminal
-$ python ambiguous_cell_detection.py --n_neighbors=3 --knn_iter=40 --expand_strategy=soft
+$ python ambiguous_cell_detection.py --n_neighbors=3 --knn_iter=40 --expand_strategy=hard
 ```
 The outputs will be saved in `./outputs/Ambiguous_cell_detection/`. The cell metadata of the target scATAC-seq data is saved as `target_cell_meta.csv`.
 ```
 $ tree Ambiguous_cell_detection
 Ambiguous_cell_detection
-├── final_detection.pdf
-├── first_step_detection.pdf
-├── target_cell_meta.csv
-└── x_means_result.pdf
+├── Ambiguous_cell_distribution.pdf
+└── target_cell_meta.csv
 ```
 ### Arguments for detecting function
 - `n_neighbors`: k nearest neighbors for finding the neighbors of the ATAC cells, default is 3. 
-- `knn_iter`: iteration times to expand the candidate ambiuous cells
+- `knn_iter`: iteration times to expand the ambiuous cells
 - `expand_strategy`: knn expanding strategy. "soft": if candidate ambiguous cell are included in neighbors of a confident cell, this confident cell is re-annotated as candidate ambiguous cell. "hard": only when candidate ambiguous cell number are larger than confident cell number in neighbors of a confident cell, this confident cell is re-annotated as candidate ambiguous cell.
 
 
