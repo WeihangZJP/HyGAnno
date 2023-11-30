@@ -1,8 +1,6 @@
 
-install.packages(Signac, version="1.7.0")
-install.packages(Seurat,version="4.3.0")
 library(Seurat)
-library(Seurat)
+library(Signac)
 setwd(getwd())
 
 #----------------------------------------------------#
