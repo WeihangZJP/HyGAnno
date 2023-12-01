@@ -68,14 +68,14 @@ data_object_generation<-function(){
 ## inputs: data_objects: data objects, 
 ##---------k_rna: the k-nearest neighbor finding edges between RNA cells, 
 ##---------k_atac: the k-nearest neighbor finding edges between ATAC cells, 
-##---------k_anchor: the k-nearest neighbor finding edges between RNA and ATAC cells (anchor detection)
+##---------k_rna_atac: the k-nearest neighbor finding edges between RNA and ATAC cells (anchor detection)
 
 ## return: No return
 
 ## output files: Output graph files of RNA, ATAC, and Anchor cells to folder named "/Graphs" 
 
 #----------------------------------------------------#
-HyGAnno_graph_generation<-function(data_objects,k_rna=25,k_atac=25,k_anchor=5){
+HyGAnno_graph_generation<-function(data_objects,k_rna=25,k_atac=25,k_rna_atac=5){
   #create the graph folder
   output_dir<-paste0(getwd(),"/HyGAnno_inputs")
   if (!dir.exists(output_dir)){
