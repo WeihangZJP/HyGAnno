@@ -52,7 +52,7 @@ Note that the `target_label.csv` is optional and will be only used for validatio
 ```
 # your terminal
 $ cd HyGAnno/
-$ Rscript Graph_coonstruction.R
+$ Rscript Graph_generation.R
 ```
 The processed count matrices and corresponding graphs will be automatically saved in the folder named `./HyGAnno_inputs`.
 ```
