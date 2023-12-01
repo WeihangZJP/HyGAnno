@@ -91,7 +91,7 @@ HyGAnno_graph_generation<-function(data_objects,k_rna=25,k_atac=25,k_anchor=5){
   message("Start constructing graphs.")
   #construct rna-atac graph
   transfer.anchors <- FindTransferAnchors(reference = data_objects$GEM, query = data_objects$GAM, features = VariableFeatures(object =data_objects$GEM),
-                                          reference.assay = "RNA", query.assay = "RNA", reduction = "cca",k.anchor=k_anchor,k.filter = NA,verbose = FALSE)
+                                          reference.assay = "RNA", query.assay = "RNA", reduction = "cca",k.anchor= k_rna_atac,k.filter = NA,verbose = FALSE)
   rna_atac_g<-transfer.anchors@anchors[,1:2]-1
   write.csv(rna_atac_g,paste0(getwd(),"/HyGAnno_inputs/Graphs/Anchor_graph.csv"), row.names = FALSE)#first column contains RNA cell id; second contains ATAC cell id
   message("#--------------------RNA-ATAC graph construction finished--------------------#")
@@ -111,7 +111,7 @@ HyGAnno_graph_generation<-function(data_objects,k_rna=25,k_atac=25,k_anchor=5){
   
   #construct atac-atac graph
   transfer.anchors <- FindTransferAnchors(reference =  data_objects$PM, query = data_objects$PM, features = VariableFeatures(object =data_objects$PM),
-                                          reference.assay = "ATAC", query.assay = "ATAC",reference.reduction="lsi", reduction = "lsiproject",dim=2:30,k_atac=25,k.filter = NA,verbose = FALSE)
+                                          reference.assay = "ATAC", query.assay = "ATAC",reference.reduction="lsi", reduction = "lsiproject",dim=2:30, k.anchor=k_atac,k.filter = NA,verbose = FALSE)
   atac_atac_g<-transfer.anchors@anchors[,1:2]-1
   write.csv(atac_atac_g,paste0(getwd(),"/HyGAnno_inputs/Graphs/ATAC_graph.csv"), row.names = FALSE)
   message("#--------------------ATAC-ATAC graph construction finished--------------------#")
@@ -186,7 +186,7 @@ HyGAnno_feature_generation<-function(data_objects,min.cutoff=1000){
 data_objects<-data_object_generation()
 
 #save graph and feature matrices 
-HyGAnno_graph_generation(data_objects,k_rna=25,k_atac=25,k_anchor=5)
+HyGAnno_graph_generation(data_objects,k_rna=25,k_atac=25,k_rna_atac=5)
 HyGAnno_feature_generation(data_objects,min.cutoff=1000)
 
 
