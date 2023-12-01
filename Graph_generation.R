@@ -1,3 +1,8 @@
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
+if (!require("Signac", quietly = TRUE))
+  BiocManager::install("Signac")
 
 library(Seurat)
 library(Signac)
