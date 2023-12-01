@@ -3,7 +3,7 @@ HyGAnno is an automated cell type annotation method designed to improve the anno
 
 HyGAnno transfers cell type information from well-annotated scRNA-seq references to unlabeled scATAC-seq targets by utilizing peak-level information. HyGAnno provides not only cell type annotations but also a reference-target cell graph to assist in identifying cells with low predictions, thereby enhancing the reliability of the cell annotation. HyGAnno stands out for its accuracy in cell annotation and its capacity for interpretable cell embedding, exhibiting robustness against noisy reference data and adaptability to tumor tissues. 
 
-HyGAnno is developed using R and Python. For more information, please refer our manuscript. 
+HyGAnno is developed using R and Python. For more information, please refer our manuscript "HyGAnno: Hybrid graph neural network-based cell type annotation for single-cell ATAC sequencing data". 
 ## Prerequisite 
 ### Essential R packages: 
 ```
