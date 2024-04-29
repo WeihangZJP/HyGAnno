@@ -3,7 +3,7 @@ HyGAnno is an automated cell type annotation method designed to improve the anno
 
 HyGAnno transfers cell type information from well-annotated scRNA-seq references to unlabeled scATAC-seq targets by utilizing peak-level information. HyGAnno provides not only cell type annotations but also a reference-target cell graph to assist in identifying cells with low predictions, thereby enhancing the reliability of the cell annotation. HyGAnno stands out for its accuracy in cell annotation and its capacity for interpretable cell embedding, exhibiting robustness against noisy reference data and adaptability to tumor tissues. 
 
-HyGAnno is developed using R and Python. For more information, please refer our manuscript "HyGAnno: Hybrid graph neural network-based cell type annotation for single-cell ATAC sequencing data". 
+HyGAnno is developed using R and Python. For more information, please refer our manuscript [HyGAnno: Hybrid graph neural network-based cell type annotation for single-cell ATAC sequencing data](https://academic.oup.com/bib/article/25/3/bbae152/7641197). 
 ## Prerequisite 
 ### Essential R packages: 
 ```
@@ -89,7 +89,7 @@ $ python main.py
 - `hidden_hyg_dim2`: Dimension number of the second hidden layer of hybrid graph embedding, default is the number of cell type in reference data.
 - `hidden_atac_dim1`: Dimension number of the first hidden layer of atac graph embedding, default is `128`.
 - `hidden_atac_dim2`: Dimension number of the second hidden layer of atac graph embedding, default is the number of cell type in reference data.
-- `learning_rate`: Leanring rate of the network, default is `0.0001`.
+- `learning_rate`: Leanring rate of the network, default is `0.0001`(if ali_loss not decrease fast, please increase the learning_rate).
 - `epoch`: Epoch number of training, default is `500`.
 
 ## Outputs
