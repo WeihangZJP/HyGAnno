@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import umap
 import os
+import configs
 dir_path=os.path.dirname(os.path.abspath(__file__))
 
 class_color20=["#1f77b4","#aec7e8","#ff7f0e","#ffbb78","#2ca02c","#98df8a","#d62728","#ff9896","#9467bd","#c5b0d5",
@@ -12,7 +13,7 @@ class_color20=["#1f77b4","#aec7e8","#ff7f0e","#ffbb78","#2ca02c","#98df8a","#d62
 
 atac_label_pred=pd.read_csv(dir_path+"/outputs/cell_type_prediction.csv")
 atac_label_pred=list(atac_label_pred.iloc[:,0])
-rna_labels=pd.read_csv(dir_path+"/Raw_RNA/reference_label.csv")
+rna_labels=pd.read_csv(configs.PATH_reference_label)
 
 label_dict={}
 for i in range(len(rna_labels["cluster_id"])):
