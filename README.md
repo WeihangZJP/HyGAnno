@@ -89,7 +89,7 @@ $ python main.py
 - `hidden_hyg_dim2`: Dimension number of the second hidden layer of hybrid graph embedding, default is the number of cell type in reference data.
 - `hidden_atac_dim1`: Dimension number of the first hidden layer of atac graph embedding, default is `128`.
 - `hidden_atac_dim2`: Dimension number of the second hidden layer of atac graph embedding, default is the number of cell type in reference data.
-- `learning_rate`: Leanring rate of the network, default is `0.0001`(if ali_loss not decrease fast, please increase the learning_rate).
+- `learning_rate`: Leanring rate of the network, default is `0.0001`(if ali_loss does not decrease fast, please increase the learning_rate).
 - `epoch`: Epoch number of training, default is `500`.
 
 ## Outputs
