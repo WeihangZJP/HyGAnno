@@ -30,12 +30,12 @@ def feature_matrix_import(PATH_feature):
     print("Shape of PM (peaks-by-cells):",atac_features.shape)
     print("Shape of GAM (genes-by-cells):",gam_features.shape)
     ##import reference labels
-    reference_label = np.array(pd.read_csv(dir_path+"/Raw_RNA/reference_label.csv")["cluster_id"])
+    reference_label = np.array(pd.read_csv(configs.PATH_reference_label)["cluster_id"])
     
     ##import target labels
     if configs.taget_label:
         if os.path.isfile(dir_path+"/Raw_ATAC/target_label.csv"):
-            target_label = np.array(pd.read_csv(dir_path+"/Raw_ATAC/target_label.csv")["cluster_id"])
+            target_label = np.array(pd.read_csv(configs.PATH_target_label)["cluster_id"])
         else:
             raise Exception("Target labels should be provided or set taget_label to False in configs.py.")
 
@@ -140,13 +140,6 @@ def graph_matrix_import(feature_dict,PATH_graph):
 
     print("#--------------------Graphs are imported--------------------#")
     
-    #check if the graph is proper for training 
-    if len(set(rna_rna_g[:,0]))!=rna_cell_num:
-      raise Exception("Cell numbers in graph and feature matrix of GEM are inconsistent !!! ")
-      
-    if len(set(atac_atac_g[:,0]))!=atac_cell_num:
-      raise Exception("Cell numbers in graph and feature matrix of PM are inconsistent !!! ")
-
     #ATAC graph construction
     atac_graph_norm=graph_processing(atac_atac_g,atac_cell_num)
     print("ATAC graph is constructed")
