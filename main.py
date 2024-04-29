@@ -155,4 +155,5 @@ if __name__=='__main__':
     print("training finished!")
     preds = output.max(1)[1].type_as(ref_label_ind_ten).cpu().detach().numpy()
 
-    print(sklearn.metrics.classification_report(label_dict["tar_label"], preds[reference_cell_num:], digits=3))
+    if configs.taget_label:
+        print(sklearn.metrics.classification_report(label_dict["tar_label"], preds[reference_cell_num:], digits=3))
