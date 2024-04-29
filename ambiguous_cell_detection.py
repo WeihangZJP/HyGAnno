@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import os
 from collections import Counter
 import argparse
-
+import configs
 
 dir_path=os.path.dirname(os.path.abspath(__file__))
 
@@ -276,7 +276,7 @@ if __name__=='__main__':
     reconstructed_graph=reconstructed_graph.todense()
     
     target_label_pred=pd.read_csv(dir_path+"/outputs/cell_type_prediction.csv")
-    reference_label=pd.read_csv(dir_path+"/Raw_RNA/reference_label.csv")     
+    reference_label=pd.read_csv(configs.PATH_reference_label)     
     target_label_pred=list(target_label_pred.iloc[:,0])
     reference_label=list(reference_label.iloc[:,1])
     
