@@ -175,8 +175,14 @@ def graph_matrix_import(feature_dict,PATH_graph):
     print("Shape of initial graph (RNA and ATAC cells):",initial_graph_norm.shape)
     
     
-    return {"hybrid":hybrid_graph_norm,"ATAC":atac_graph_norm,"initial":initial_graph_norm,"initial_label":initial_graph_label},anchor_atac_dict1,anchor_atac_dict2
+
+    #normalization of GAM and GEM
+    norm_rna_features=preprocessing.scale(np.asarray(rna_features),axis=1)
+    norm_gam_features=preprocessing.scale(np.asarray(gam_features),axis=1)
+    
+    return {"GEM":norm_rna_features,"GAM":norm_gam_features,"PM":atac_features},{"ref_label":reference_label,"tar_label":target_label}
 #------------------------------------------------------------------------------------------------------------------------#
+
 
 
 
