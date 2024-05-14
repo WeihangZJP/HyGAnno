@@ -120,7 +120,7 @@ if __name__=='__main__':
         edge_similarity = edges_diff(A_pred_m,initial_graph_label_tens)
         node_similarity = nodes_diff(output[ref_label_ind_ten], true_ref_label_tens)
         preds = output.max(1)[1].type_as(ref_label_ind_ten).cpu().detach().numpy()
-        if configs.taget_label:
+        if configs.target_label:
             print('%04d' % (epoch), "train_loss=", "{:.5f}".format(loss.item()),"ali_loss=", "{:.5f}".format(loss_align.item()),
                   "node_acc=", "{:.5f}".format(node_similarity), "edge_acc=", "{:.5f}".format(edge_similarity),
                   "time=", "{:.5f}".format(time.time() - t),"NMI=","{:.5f}".format(sklearn.metrics.normalized_mutual_info_score(label_dict["tar_label"],preds[reference_cell_num:])),
@@ -155,5 +155,4 @@ if __name__=='__main__':
     print("training finished!")
     preds = output.max(1)[1].type_as(ref_label_ind_ten).cpu().detach().numpy()
 
-    if configs.taget_label:
-        print(sklearn.metrics.classification_report(label_dict["tar_label"], preds[reference_cell_num:], digits=3))
+    print(sklearn.metrics.classification_report(label_dict["tar_label"], preds[reference_cell_num:], digits=3))

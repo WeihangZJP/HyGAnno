@@ -8,7 +8,6 @@ import configs
 import os
 dir_path=os.path.dirname(os.path.abspath(__file__))
 
-
 #------------------------------------------------------------------------------------------------------------------------#
 # function name: feature_matrix_import
 # Description: Import the feature matrices as the inputs of HyGAnno
@@ -30,14 +29,14 @@ def feature_matrix_import(PATH_feature):
     print("Shape of PM (peaks-by-cells):",atac_features.shape)
     print("Shape of GAM (genes-by-cells):",gam_features.shape)
     ##import reference labels
-    reference_label = np.array(pd.read_csv(configs.PATH_reference_label)["cluster_id"])
+    reference_label = np.array(pd.read_csv(dir_path+"/Raw_RNA/reference_label.csv")["cluster_id"])
     
     ##import target labels
-    if configs.taget_label:
+    if configs.target_label:
         if os.path.isfile(dir_path+"/Raw_ATAC/target_label.csv"):
-            target_label = np.array(pd.read_csv(configs.PATH_target_label)["cluster_id"])
+            target_label = np.array(pd.read_csv(dir_path+"/Raw_ATAC/target_label.csv")["cluster_id"])
         else:
-            raise Exception("Target labels should be provided or set taget_label to False in configs.py.")
+            raise Exception("Target labels should be provided or set target_label to False in configs.py.")
 
     else:
         target_label=None
@@ -47,16 +46,11 @@ def feature_matrix_import(PATH_feature):
     if rna_features.shape[0]!=gam_features.shape[0]:
       raise Exception("The numbers of gene features of GAM and GEM are inconsistent !!! ")
       
-    if configs.taget_label:
+    if configs.target_label:
         if len(reference_label)!=rna_features.shape[1] or len(target_label)!=atac_features.shape[1]:
             raise Exception("The numbers of cells in label list and feature matrix is inconsistent !!!")
-
     
-    #normalization of GAM and GEM
-    norm_rna_features=preprocessing.scale(np.asarray(rna_features))
-    norm_gam_features=preprocessing.scale(np.asarray(gam_features))
-    
-    return {"GEM":norm_rna_features,"GAM":norm_gam_features,"PM":gam_features},{"ref_label":reference_label,"tar_label":target_label}
+    return {"GEM":rna_features,"GAM":gam_features,"PM":atac_features},{"ref_label":reference_label,"tar_label":target_label}
 #------------------------------------------------------------------------------------------------------------------------#
 
 
@@ -140,6 +134,13 @@ def graph_matrix_import(feature_dict,PATH_graph):
 
     print("#--------------------Graphs are imported--------------------#")
     
+    #check if the graph is proper for training 
+    if len(set(rna_rna_g[:,0]))!=rna_cell_num:
+      raise Exception("Cell numbers in graph and feature matrix of GEM are inconsistent !!! ")
+      
+    if len(set(atac_atac_g[:,0]))!=atac_cell_num:
+      raise Exception("Cell numbers in graph and feature matrix of PM are inconsistent !!! ")
+
     #ATAC graph construction
     atac_graph_norm=graph_processing(atac_atac_g,atac_cell_num)
     print("ATAC graph is constructed")
