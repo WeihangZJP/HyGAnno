@@ -177,8 +177,8 @@ def graph_matrix_import(feature_dict,PATH_graph):
     
 
     #normalization of GAM and GEM
-    norm_rna_features=preprocessing.scale(np.asarray(rna_features),axis=1)
-    norm_gam_features=preprocessing.scale(np.asarray(gam_features),axis=1)
+    norm_rna_features=preprocessing.scale(np.asarray(rna_features))
+    norm_gam_features=preprocessing.scale(np.asarray(gam_features))
     
     return {"GEM":norm_rna_features,"GAM":norm_gam_features,"PM":atac_features},{"ref_label":reference_label,"tar_label":target_label}
 #------------------------------------------------------------------------------------------------------------------------#
