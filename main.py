@@ -91,13 +91,13 @@ if __name__=='__main__':
     #begin training!
     for epoch in range(1,configs.epoch):
         t = time.time()
-        
+
+        #set grad zero
+        optimizer.zero_grad()
+
         #forward
         #loss_align minimize the distance of ATAC anchor cells viewed by hybrid and atac graphs
         A_pred_m,Z_m,Z_h,Mean_atac,Logstd_atac,output,loss_align = Model(hyg_features_tens,atac_features_tens,reference_cell_num,anchor_atac_dict1)
-        
-        #set grad zero
-        optimizer.zero_grad()
         
         #loss1: kl_dvergence to make the embedding of cells in hybrid and atac graphs are satisfied with gaussian distribution
         kl_dvergence_hyg=0.5/ hybrid_cell_num * (1 + 2*Model.logstd_hyg - Model.mean_hyg**2 - torch.exp(Model.logstd_hyg)**2).sum(1).mean()
