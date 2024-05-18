@@ -79,14 +79,16 @@ def graph_processing(graph,node_number,norm=True):
     data=[1 for i in range(len(graph))]
     graph_coo=sp.coo_matrix((data, (graph[:,0], graph[:,1])), shape=(node_number, node_number))
     graph_coo=graph_coo+graph_coo.transpose()
-    graph_coo =graph_coo + sp.eye(graph_coo.shape[0])
-    #set diag to be 0
+
+    #set diag to be less than 0
+    graph_coo =graph_coo - 100*sp.eye(graph_coo.shape[0])
     graph_mat=graph_coo.toarray()
     # set all elements larger than 0 to 1
+    graph_mat[graph_mat < 0] = 0
     graph_mat=np.int64(graph_mat>0)
-    graph_coo=sp.coo_matrix(graph_mat)
+
+    graph_coo=sp.coo_matrix(graph_mat)+sp.eye(graph_coo.shape[0])
     if norm==False:
-        #return graph_coo-sp.eye(graph_coo.shape[0])
         return graph_coo
     
     #normalize
@@ -94,6 +96,8 @@ def graph_processing(graph,node_number,norm=True):
     degree_mat_inv_sqrt = sp.diags(np.power(rowsum, -0.5).flatten())
     graph_normalized = graph_coo.dot(degree_mat_inv_sqrt).transpose().dot(degree_mat_inv_sqrt).tocoo()
     return graph_normalized
+#------------------------------------------------------------------------------------------------------------------------#
+
 #------------------------------------------------------------------------------------------------------------------------#
 
 
