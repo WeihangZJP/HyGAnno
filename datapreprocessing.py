@@ -78,16 +78,10 @@ def graph_processing(graph,node_number,norm=True):
     
     data=[1 for i in range(len(graph))]
     graph_coo=sp.coo_matrix((data, (graph[:,0], graph[:,1])), shape=(node_number, node_number))
+    mask = graph_coo.row < graph_coo.col
+    graph_coo = sp.coo_matrix((graph_coo.data[mask],(graph_coo.row[mask], graph_coo.col[mask])),shape=graph_coo.shape)
     graph_coo=graph_coo+graph_coo.transpose()
-
-    #set diag to be less than 0
-    graph_coo =graph_coo - 100*sp.eye(graph_coo.shape[0])
-    graph_mat=graph_coo.toarray()
-    # set all elements larger than 0 to 1
-    graph_mat[graph_mat < 0] = 0
-    graph_mat=np.int64(graph_mat>0)
-
-    graph_coo=sp.coo_matrix(graph_mat)+sp.eye(graph_coo.shape[0])
+    graph_coo=sp.coo_matrix(graph_coo)+sp.eye(graph_coo.shape[0])
     if norm==False:
         return graph_coo
     
